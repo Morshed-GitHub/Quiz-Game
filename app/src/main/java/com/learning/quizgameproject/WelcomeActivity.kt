@@ -27,7 +27,7 @@ class WelcomeActivity : AppCompatActivity() {
         // In order to handle time delaying
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({ // object : Runnable {} -> Short
-            val intent : Intent = Intent(this@WelcomeActivity, MainActivity::class.java)
+            val intent : Intent = Intent(this@WelcomeActivity, LoginActivity::class.java)
             startActivity(intent)
             finish() // Destroy the current activity
         }, 4000) // 5000 milliseconds -> 5 seconds
