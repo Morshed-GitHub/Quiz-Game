@@ -12,21 +12,27 @@
         android:theme="@style/Theme.QuizGameProject"
         tools:targetApi="31">
         <activity
+            android:name=".SignupActivity"
+            android:exported="false"
+            android:theme="@style/SignupTheme"
+            android:parentActivityName=".LoginActivity"/>
+        <activity
             android:name=".LoginActivity"
             android:exported="false"
-            android:theme="@style/SplashTheme"/>
+            android:theme="@style/SplashTheme" />
         <activity
             android:name=".WelcomeActivity"
             android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
     </application>
 
 </manifest>

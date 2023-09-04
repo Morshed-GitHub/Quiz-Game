@@ -38,6 +38,7 @@
             app:boxStrokeColor="@color/black">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSignupEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
@@ -56,6 +57,7 @@
             app:boxStrokeColor="@color/black">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSignupPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Password"
@@ -64,7 +66,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/buttonSignIn"
+            android:id="@+id/buttonSignInsignup"
             android:layout_width="250dp"
             android:layout_height="60dp"
             android:layout_marginTop="20dp"
@@ -102,13 +104,14 @@
                 android:background="@color/black" />
         </LinearLayout>
 
-                <com.google.android.gms.common.SignInButton
-                    android:layout_width="250dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="10dp"/>
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/buttonGoogleSignIn"
+            android:layout_width="250dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tvSignUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -118,7 +121,7 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tvForgotPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
