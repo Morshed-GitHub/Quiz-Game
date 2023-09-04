@@ -28,6 +28,11 @@ class LoginActivity : AppCompatActivity() {
             val password : String = loginBinding.etLoginPassword.text.toString()
             signInWithFirebase(email, password)
         }
+
+        loginBinding.tvForgotPassword.setOnClickListener {
+            val intent : Intent = Intent(this@LoginActivity, ForgotPasswordActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onStart() {
