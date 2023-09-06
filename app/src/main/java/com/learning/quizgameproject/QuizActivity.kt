@@ -1,8 +1,10 @@
 package com.learning.quizgameproject
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import com.google.firebase.database.*
@@ -22,6 +24,9 @@ class QuizActivity : AppCompatActivity() {
     var questionCount : Int = 0
     var questionNumber : Int = 1
 
+    var correctAnswerCount : Int = 0
+    var wrongAnswerCount : Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         quizBinding = ActivityQuizBinding.inflate(layoutInflater)
@@ -33,10 +38,58 @@ class QuizActivity : AppCompatActivity() {
         quizBinding.buttonNext.setOnClickListener { gameLogic() }
         quizBinding.buttonFinish.setOnClickListener {  }
 
-        quizBinding.tvOptA.setOnClickListener {  }
-        quizBinding.tvOptB.setOnClickListener {  }
-        quizBinding.tvOptC.setOnClickListener {  }
-        quizBinding.tvOptD.setOnClickListener {  }
+        quizBinding.tvOptA.setOnClickListener {
+            showQuestionResult("a", quizBinding.tvOptA)
+        }
+        quizBinding.tvOptB.setOnClickListener {
+            showQuestionResult("b", quizBinding.tvOptB)
+        }
+        quizBinding.tvOptC.setOnClickListener {
+            showQuestionResult("c", quizBinding.tvOptC)
+        }
+        quizBinding.tvOptD.setOnClickListener {
+            showQuestionResult("d", quizBinding.tvOptD)
+        }
+    }
+
+    private fun showQuestionResult(ans: String, tvOpt: TextView) {
+        if (answer == ans) {
+            tvOpt.setBackgroundColor(Color.GREEN)
+            correctAnswerCount++
+            quizBinding.tvCorrectAnswer.text = correctAnswerCount.toString()
+        } else {
+            tvOpt.setBackgroundColor(Color.RED)
+            wrongAnswerCount++
+            quizBinding.tvWrongAnswer.text = wrongAnswerCount.toString()
+            findCorrectAnswer()
+        }
+
+        setClickableOptions(false)
+    }
+
+    private fun setClickableOptions(value : Boolean) {
+        quizBinding.tvOptA.isClickable = value
+        quizBinding.tvOptB.isClickable = value
+        quizBinding.tvOptC.isClickable = value
+        quizBinding.tvOptD.isClickable = value
+    }
+
+    private fun findCorrectAnswer() {
+        when(answer) {
+            "a" -> quizBinding.tvOptA.setBackgroundColor(Color.GREEN)
+            "b" -> quizBinding.tvOptB.setBackgroundColor(Color.GREEN)
+            "c" -> quizBinding.tvOptC.setBackgroundColor(Color.GREEN)
+            "d" -> quizBinding.tvOptD.setBackgroundColor(Color.GREEN)
+        }
+    }
+
+    private fun restoreOptions () {
+        quizBinding.tvOptA.setBackgroundColor(Color.WHITE)
+        quizBinding.tvOptB.setBackgroundColor(Color.WHITE)
+        quizBinding.tvOptC.setBackgroundColor(Color.WHITE)
+        quizBinding.tvOptD.setBackgroundColor(Color.WHITE)
+
+        setClickableOptions(true)
     }
 
     private fun gameLogic() {
@@ -45,6 +98,7 @@ class QuizActivity : AppCompatActivity() {
                 questionCount = snapshot.childrenCount.toInt()
 
                 if (questionNumber <= questionCount) {
+                    restoreOptions() // Clear's previous answer's and restore everything as new
                     question = snapshot.child(questionNumber.toString()).child("q").value.toString()
                     optA = snapshot.child(questionNumber.toString()).child("a").value.toString()
                     optB = snapshot.child(questionNumber.toString()).child("b").value.toString()
