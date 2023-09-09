@@ -3,6 +3,7 @@ package com.learning.quizgameproject
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -27,6 +28,11 @@ class QuizActivity : AppCompatActivity() {
     var correctAnswerCount : Int = 0
     var wrongAnswerCount : Int = 0
 
+    lateinit var timer: CountDownTimer
+    private val totalTime : Long = 30000L // 1s -> 1000ms & L -> Long Data Type
+    var timerContinue : Boolean = false
+    var leftTime : Long = totalTime
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         quizBinding = ActivityQuizBinding.inflate(layoutInflater)
@@ -35,7 +41,11 @@ class QuizActivity : AppCompatActivity() {
 
         gameLogic()
 
-        quizBinding.buttonNext.setOnClickListener { gameLogic() }
+        quizBinding.buttonNext.setOnClickListener {
+            // If we don't reset the timer, then it will start from where it left from previous question
+            resetTimer()
+            gameLogic()
+        }
         quizBinding.buttonFinish.setOnClickListener {  }
 
         quizBinding.tvOptA.setOnClickListener {
@@ -53,6 +63,7 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun showQuestionResult(ans: String, tvOpt: TextView) {
+        pauseTimer()
         if (answer == ans) {
             tvOpt.setBackgroundColor(Color.GREEN)
             correctAnswerCount++
@@ -118,6 +129,7 @@ class QuizActivity : AppCompatActivity() {
                     quizBinding.linearLayoutbutton.isVisible = true
 
                     questionNumber++
+                    startTimer()
                 } else {
                     Toast.makeText(applicationContext, "Congratulations!! you have successfully completed the Quiz Game ✔", Toast.LENGTH_SHORT).show()
                 }
@@ -127,5 +139,43 @@ class QuizActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, error.message, Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun startTimer () {
+        val oneSec : Long = 1000L
+
+        // As CountDownTimer is an Abstract class, direct object/ instance creation is not possible.
+        // We must have to create it's object as anonymous.
+        timer = object : CountDownTimer(leftTime, oneSec) {
+            override fun onTick(leftTimeInMillis: Long) {
+                leftTime = leftTimeInMillis
+                updateCountDownText()
+            }
+
+            override fun onFinish() {
+                setClickableOptions(false)
+                resetTimer()
+                updateCountDownText()
+                quizBinding.tvQuestion.text = "Sorry, time is up! Continue with next question."
+                timerContinue = false
+            }
+        }.start()
+        timerContinue = true
+    }
+
+    private fun resetTimer() {
+        pauseTimer()
+        leftTime = totalTime
+        updateCountDownText()
+    }
+
+    private fun pauseTimer () {
+        timer.cancel()
+        timerContinue = false
+    }
+
+    private fun updateCountDownText() {
+        val remainingTime : Int = (leftTime / 1000).toInt() // Get remainingTime in seconds
+        quizBinding.tvTime.text = remainingTime.toString()
     }
 }
