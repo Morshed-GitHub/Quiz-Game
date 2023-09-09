@@ -1,5 +1,6 @@
 package com.learning.quizgameproject
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,6 +9,8 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.learning.quizgameproject.databinding.ActivityQuizBinding
 
@@ -33,6 +36,10 @@ class QuizActivity : AppCompatActivity() {
     var timerContinue : Boolean = false
     var leftTime : Long = totalTime
 
+    private val auth : FirebaseAuth = FirebaseAuth.getInstance()
+    private val user : FirebaseUser? = auth.currentUser
+    private val scoreRef : DatabaseReference = db.reference.child("scores")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         quizBinding = ActivityQuizBinding.inflate(layoutInflater)
@@ -46,7 +53,10 @@ class QuizActivity : AppCompatActivity() {
             resetTimer()
             gameLogic()
         }
-        quizBinding.buttonFinish.setOnClickListener {  }
+
+        quizBinding.buttonFinish.setOnClickListener {
+            sendScoreToFirebaseDB()
+        }
 
         quizBinding.tvOptA.setOnClickListener {
             showQuestionResult("a", quizBinding.tvOptA)
@@ -59,6 +69,20 @@ class QuizActivity : AppCompatActivity() {
         }
         quizBinding.tvOptD.setOnClickListener {
             showQuestionResult("d", quizBinding.tvOptD)
+        }
+    }
+
+    private fun sendScoreToFirebaseDB() {
+        user?.let {
+            val userUID = it.uid
+            scoreRef.child(userUID).child("correct").setValue(correctAnswerCount)
+            scoreRef.child(userUID).child("wrong").setValue(wrongAnswerCount)
+
+            Toast.makeText(applicationContext, "Scores saved successfully ✔", Toast.LENGTH_SHORT).show()
+
+            val intent : Intent = Intent(this@QuizActivity, ResultActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 

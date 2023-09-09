@@ -14,9 +14,12 @@
         android:theme="@style/Theme.QuizGameProject"
         tools:targetApi="31">
         <activity
+            android:name=".ResultActivity"
+            android:exported="false" />
+        <activity
             android:name=".QuizActivity"
             android:exported="false"
-            android:theme="@style/SignupTheme"/>
+            android:theme="@style/SignupTheme" />
         <activity
             android:name=".ForgotPasswordActivity"
             android:exported="false"
