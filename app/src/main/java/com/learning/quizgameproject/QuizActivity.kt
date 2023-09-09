@@ -8,12 +8,12 @@ import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.learning.quizgameproject.databinding.ActivityQuizBinding
+import kotlin.random.Random
 
 class QuizActivity : AppCompatActivity() {
     lateinit var quizBinding: ActivityQuizBinding
@@ -27,7 +27,7 @@ class QuizActivity : AppCompatActivity() {
     var optD : String = ""
     var answer : String = ""
     var questionCount : Int = 0
-    var questionNumber : Int = 1
+    var questionNumber : Int = 0
 
     var correctAnswerCount : Int = 0
     var wrongAnswerCount : Int = 0
@@ -41,11 +41,18 @@ class QuizActivity : AppCompatActivity() {
     private val user : FirebaseUser? = auth.currentUser
     private val scoreRef : DatabaseReference = db.reference.child("scores")
 
+    var qIndexes : HashSet<Int> = HashSet<Int>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         quizBinding = ActivityQuizBinding.inflate(layoutInflater)
         val view : View = quizBinding.root
         setContentView(view)
+
+        do {
+            val randomIndex : Int = Random.nextInt(1,11)
+            qIndexes.add(randomIndex)
+        } while (qIndexes.size < 5)
 
         gameLogic()
 
@@ -133,14 +140,15 @@ class QuizActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 questionCount = snapshot.childrenCount.toInt()
 
-                if (questionNumber <= questionCount) {
+                if (questionNumber < qIndexes.size) {
                     restoreOptions() // Clear's previous answer's and restore everything as new
-                    question = snapshot.child(questionNumber.toString()).child("q").value.toString()
-                    optA = snapshot.child(questionNumber.toString()).child("a").value.toString()
-                    optB = snapshot.child(questionNumber.toString()).child("b").value.toString()
-                    optC = snapshot.child(questionNumber.toString()).child("c").value.toString()
-                    optD = snapshot.child(questionNumber.toString()).child("d").value.toString()
-                    answer = snapshot.child(questionNumber.toString()).child("answer").value.toString()
+                    val ind : String = qIndexes.elementAt(questionNumber).toString()
+                    question = snapshot.child(ind).child("q").value.toString()
+                    optA = snapshot.child(ind).child("a").value.toString()
+                    optB = snapshot.child(ind).child("b").value.toString()
+                    optC = snapshot.child(ind).child("c").value.toString()
+                    optD = snapshot.child(ind).child("d").value.toString()
+                    answer = snapshot.child(ind).child("answer").value.toString()
 
                     quizBinding.tvQuestion.text = question
                     quizBinding.tvOptA.text = optA
