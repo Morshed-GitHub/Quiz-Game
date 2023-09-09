@@ -8,6 +8,7 @@ import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -155,7 +156,7 @@ class QuizActivity : AppCompatActivity() {
                     questionNumber++
                     startTimer()
                 } else {
-                    Toast.makeText(applicationContext, "Congratulations!! you have successfully completed the Quiz Game ✔", Toast.LENGTH_SHORT).show()
+                    showDialogMessage()
                 }
             }
 
@@ -163,6 +164,20 @@ class QuizActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, error.message, Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun showDialogMessage() {
+        val dialogMessage = android.app.AlertDialog.Builder(this@QuizActivity)
+        dialogMessage.setTitle("Quiz Game")
+            .setMessage("Congratulations!!!\nYou have answered all the questions. Do you want to see the results?")
+            .setCancelable(false) // AlertDialog will not be effected when user tapped outside of the AlertDialog
+            .setPositiveButton("See Result") { dialogWindow, position ->
+                sendScoreToFirebaseDB()
+            }.setNegativeButton("Play Again") { dialogWindow, position ->
+                val intent : Intent = Intent(this@QuizActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }.create().show()
     }
 
     private fun startTimer () {
